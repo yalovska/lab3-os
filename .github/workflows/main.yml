@@ -9,7 +9,7 @@ on:
 
 jobs:
   build-and-test:
-    # Назва нашої матриці
+    
     strategy:
       fail-fast: false # Не зупиняти всі тести, якщо один впав
       matrix:
@@ -22,18 +22,17 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      # Крок 1: Отримуємо код з репозиторію
+      # Отримуємо код з репозиторію
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Крок 2: Налаштовуємо Python
+      # Налаштовуння Python
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
 
-      # Крок 3: (За бажанням) Кешування залежностей
-      # Це значно пришвидшить збірку, особливо для numpy
+      # Кешування залежностей
       - name: Cache dependencies
         uses: actions/cache@v4
         with:
@@ -43,18 +42,18 @@ jobs:
             ${{ runner.os }}-pip-${{ matrix.python-version }}-
             ${{ runner.os }}-pip-
 
-      # Крок 4: Встановлюємо залежності (вимога про "принаймні одну")
+      # Встановлення залежності
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # Крок 5: Запускаємо тести
-      # Створюємо лог-файл
+      
+      # Створення лог-файлу
       - name: Run tests with pytest
         run: pytest --verbose > test-results.log || true
 
-      # Крок 6: (За бажанням) Створюємо артефакт з логами
+      # Створення артефакту з логами
       - name: Upload test logs
         if: always() # Завжди завантажувати логи, навіть якщо тести впали
         uses: actions/upload-artifact@v4
